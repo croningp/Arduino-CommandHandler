@@ -1,0 +1,33 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+CommandHandler KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+addCommand        KEYWORD2
+setDefaultHandler KEYWORD2
+processSerial     KEYWORD2
+processString     KEYWORD2
+processChar       KEYWORD2
+clearBuffer       KEYWORD2
+remaining         KEYWORD2
+next              KEYWORD2
+readInt16Arg      KEYWORD2
+readInt32Arg      KEYWORD2
+readBoolArg       KEYWORD2
+readFloatArg      KEYWORD2
+readDoubleArg     KEYWORD2
+readStringArg     KEYWORD2
+compareStringArg  KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
