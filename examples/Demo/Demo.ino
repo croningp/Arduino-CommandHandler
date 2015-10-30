@@ -34,7 +34,7 @@ void setup() {
 void loop() {
   //Of course we can use the same functionnality by readng from the Serial
   cmdHdl.processSerial(Serial);
-  // Send "HELLO,yourname;" to your board
+  // Try send "HELLO,yourname;" to your board via serial
 
   // The above processSerial function is simply doing the following
   //if (Serial.available() > 0){
@@ -54,8 +54,13 @@ void loop() {
   // Send "FWD,P,2000;" to the board, it should forward the "P,2000;" to itself
   // (thanks to the processString() function)
   // As "P" is assocviated with the processCommand() function, it will run it
-}
 
+  // Below are a bunch of serial command you can try sending
+  // Try predicting what it will do
+  // P,3.5;
+  // FWD,P,3.5;
+  // FWD,FWD,FWD,P,3.5;
+}
 
 void sayHello() {
   char *arg;

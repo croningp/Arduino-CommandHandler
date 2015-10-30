@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "CommandHandler.h"
 
 /**
