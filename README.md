@@ -2,9 +2,27 @@
 
 A Wiring/Arduino library to tokenize and parse commands received either by the serial port, as a string, or char by char.
 
-The most important feature of this library is the ability to read from string, while not being at all a technical challenge to implement, it is useful to modularize some code. Commands can be nested one into another.
+The message format is:
+```
+CmdString,arg1,[...],argN;
+```
 
-Imagine your main program receiving "M1,P,2000;" command throught Serial. The main program could redirect the "P,2000;" string command to the a device called "M1". The M1 device can then use its own commandHandler to handle the sub command "P,2000;". To extract the remaining of a command, you can use the function remaining(), give it to whatever thing that you associated to M1 through the processString() function. The command handler of M1 can then parse it and enjoy all the feature of the commandHandler, i.e. callback and casting of arguments.
+Although the field separator ',' and command separator ';' can be changed.
+
+The library can:
+- Attach callback functions to received command
+- Parse a command char by char
+- Parse a string command
+- Receive commands through the serial port
+- Both read multiple arguments
+- Both read all primary data types
+
+We expect to support soon:
+- Forging of string packet with multiple argument of different primary type
+
+The most important feature of this library is the ability to read from string, while not being at all a technical challenge to implement, it is useful to modularize your code. Commands can be nested one into another.
+
+Imagine your main program receiving "M1,P,2000;" command through Serial. The main program could redirect the "P,2000;" string command to the a sub-device called "M1". The M1 device can then use its own commandHandler to handle the sub command "P,2000;". To extract the remaining of a command, you can use the function remaining(), give that remaining to another commandHandler instance (e.g. the one associated to M1) through the processString() function. The command handler of M1 can then parse it and enjoy all the feature of the commandHandler, i.e. callback and casting of arguments.
 
 Please refer, and read through, the [Demo example](examples/Demo/Demo.ino) for practical usage of this library.
 
