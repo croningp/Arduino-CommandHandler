@@ -20,7 +20,11 @@ The library can:
 We expect to support soon:
 - Forging of string packet with multiple argument of different primary type
 
-The most important feature of this library is the ability to read from string, while not being at all a technical challenge to implement, it is useful to modularize your code. Commands can be nested one into another.
+#### Main difference with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand) and [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
+
+Unlike [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger), the command identifier can be any string, which make your code more readable
+
+It differs with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand) by the ability to nest commandHandlers. This has been made possible by a simple change: adding the ability to read from string. While not being at all a technical challenge to implement, it can be really useful to modularize your code.
 
 Imagine your main program receiving "M1,P,2000;" command through Serial. The main program could redirect the "P,2000;" string command to the a sub-device called "M1". The M1 device can then use its own commandHandler to handle the sub command "P,2000;". To extract the remaining of a command, you can use the function remaining(), give that remaining to another commandHandler instance (e.g. the one associated to M1) through the processString() function. The command handler of M1 can then parse it and enjoy all the feature of the commandHandler, i.e. callback and casting of arguments.
 
@@ -32,8 +36,8 @@ This is derived from the SerialCommand library whose original version was writte
 
 Some features are also extracted from [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger), such as the function returning next arg already casted in types, e.g. readInt16Arg
 
-This code has been written by Jonathan Grizou while working in the CroninGroup.
-
 ### License
+
+This code has been written by Jonathan Grizou while working in the CroninGroup.
 
 [![LGPL V3](http://www.gnu.org/graphics/lgplv3-147x51.png)](http://www.gnu.org/licenses/lgpl-3.0.en.html)
