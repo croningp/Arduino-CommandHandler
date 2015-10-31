@@ -53,7 +53,7 @@ class CommandHandler {
   public:
     CommandHandler(char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, char newterm = COMMANDHANDLER_DEFAULT_TERM);   // Constructor
     void addCommand(const char *command, void(*function)());  // Add a command to the processing dictionary.
-    void addRelay(const char *command, void (*function)(const char *));  // Add a command to the relay dictionary. Such relay are given the remaining of the command.
+    void addRelay(const char *command, void (*function)(const char *, void*), void* pt2Object = NULL);  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
     void setDefaultHandler(void (*function)(const char *));   // A handler to call when no valid command received.
 
     void processSerial(Stream &comms);  // Process what on the stream
@@ -86,7 +86,8 @@ class CommandHandler {
     // Relay/handler dictionary
     struct RelayHandlerCallback {
       char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
-      void (*function)(const char *);
+      void* pt2Object;
+      void (*function)(const char *, void*);
     };                                 // Data structure to hold Relay/Handler function key-value pairs
     RelayHandlerCallback *relayList;   // Actual definition for Relay/handler array
     byte relayCount;

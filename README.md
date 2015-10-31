@@ -31,7 +31,7 @@ Imagine your main program receiving "M1,P,2000;" command through Serial. The mai
 
 Please refer, and read through, the [Demo example](examples/Demo/Demo.ino) for practical usage of this library.
 
-All the above steps can be encapsulated by registering relay callback function. When triggered by the associated command, the command handler with call the relay command, passing in argument the remaining of the command. This behavior is illustrated in the Arduino-CommandAccelStepper library. [TODO add link to library once on github]
+All the above steps can be encapsulated by registering relay callback function. When triggered by the associated command, the command handler with call the relay command, passing in argument the remaining of the command. This behavior is illustrated in the [Arduino-CommandAccelStepper library](https://github.com/croningp/Arduino-CommandAccelStepper).
 
 ### Getting started
 

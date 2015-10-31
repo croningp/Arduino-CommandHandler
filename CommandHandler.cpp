@@ -67,7 +67,7 @@ void CommandHandler::addCommand(const char *command, void (*function)()) {
  * This is used for matching a found token in the buffer, and gives the pointer
  * to the handler function to deal with the remaining of the command
  */
-void CommandHandler::addRelay(const char *command, void (*function)(const char *)) {
+void CommandHandler::addRelay(const char *command, void (*function)(const char *, void*), void* pt2Object) {
   #ifdef COMMANDHANDLER_DEBUG
     Serial.print("Adding relay (");
     Serial.print(relayCount);
@@ -77,6 +77,7 @@ void CommandHandler::addRelay(const char *command, void (*function)(const char *
 
   relayList = (RelayHandlerCallback *) realloc(relayList, (relayCount + 1) * sizeof(RelayHandlerCallback));
   strncpy(relayList[relayCount].command, command, COMMANDHANDLER_MAXCOMMANDLENGTH);
+  relayList[relayCount].pt2Object = pt2Object;
   relayList[relayCount].function = function;
   relayCount++;
 }
@@ -175,7 +176,7 @@ void CommandHandler::processChar(char inChar) {
           #endif
 
           // Execute the stored handler function for the command
-          (*relayList[i].function)(remaining());
+          (*relayList[i].function)(remaining(), relayList[i].pt2Object);
           matched = true;
           break;
         }
