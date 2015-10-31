@@ -26,27 +26,15 @@
 #include "CommandHandler.h"
 
 /**
- * Constructor makes sure some things are set.
- */
-CommandHandler::CommandHandler()
-  : commandList(NULL),
-    commandCount(0),
-    defaultHandler(NULL),
-    term(COMMANDHANDLER_DEFAULT_TERM),           // default terminator for commands, newline character
-    last(NULL)
-{
-  delim = COMMANDHANDLER_DEFAULT_DELIM; // strtok_r needs a null-terminated string
-  clearBuffer();
-}
-
-
-/**
  * Constructor allowing to change default delim and term
  * Example: SerialCommand sCmd(" ", ';');
+ * Default are COMMANDHANDLER_DEFAULT_DELIM and COMMANDHANDLER_DEFAULT_TERM
  */
 CommandHandler::CommandHandler(char *newdelim, char newterm)
   : commandList(NULL),
     commandCount(0),
+    relayList(NULL),
+    relayCount(0),
     defaultHandler(NULL),
     term(newterm),           // asssign new terminator for commands
     last(NULL)
@@ -72,6 +60,25 @@ void CommandHandler::addCommand(const char *command, void (*function)()) {
   strncpy(commandList[commandCount].command, command, COMMANDHANDLER_MAXCOMMANDLENGTH);
   commandList[commandCount].function = function;
   commandCount++;
+}
+
+/**
+ * Adds a "command" and a handler function to the list of available relay.
+ * This is used for matching a found token in the buffer, and gives the pointer
+ * to the handler function to deal with the remaining of the command
+ */
+void CommandHandler::addRelay(const char *command, void (*function)(const char *)) {
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Adding relay (");
+    Serial.print(relayCount);
+    Serial.print("): ");
+    Serial.println(command);
+  #endif
+
+  relayList = (RelayHandlerCallback *) realloc(relayList, (relayCount + 1) * sizeof(RelayHandlerCallback));
+  strncpy(relayList[relayCount].command, command, COMMANDHANDLER_MAXCOMMANDLENGTH);
+  relayList[relayCount].function = function;
+  relayCount++;
 }
 
 /**
@@ -127,6 +134,7 @@ void CommandHandler::processChar(char inChar) {
     char *command = strtok_r(buffer, delim, &last);   // Search for command at start of buffer
     if (command != NULL) {
       boolean matched = false;
+      // searching in commands
       for (int i = 0; i < commandCount; i++) {
         #ifdef COMMANDHANDLER_DEBUG
           Serial.print("Comparing [");
@@ -145,6 +153,29 @@ void CommandHandler::processChar(char inChar) {
 
           // Execute the stored handler function for the command
           (*commandList[i].function)();
+          matched = true;
+          break;
+        }
+      }
+      // searching in relays
+      for (int i = 0; i < relayCount; i++) {
+        #ifdef COMMANDHANDLER_DEBUG
+          Serial.print("Comparing [");
+          Serial.print(command);
+          Serial.print("] to [");
+          Serial.print(relayList[i].command);
+          Serial.println("]");
+        #endif
+
+        // Compare the found command against the relay list of known commands for a match
+        if (strncmp(command, relayList[i].command, COMMANDHANDLER_MAXCOMMANDLENGTH) == 0) {
+          #ifdef COMMANDHANDLER_DEBUG
+            Serial.print("Matched Relay: ");
+            Serial.println(command);
+          #endif
+
+          // Execute the stored handler function for the command
+          (*relayList[i].function)(remaining());
           matched = true;
           break;
         }

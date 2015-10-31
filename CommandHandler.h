@@ -51,9 +51,9 @@
 
 class CommandHandler {
   public:
-    CommandHandler();      // Constructor
-    CommandHandler(char *newdelim, char newterm);   // Constructor
+    CommandHandler(char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, char newterm = COMMANDHANDLER_DEFAULT_TERM);   // Constructor
     void addCommand(const char *command, void(*function)());  // Add a command to the processing dictionary.
+    void addRelay(const char *command, void (*function)(const char *));  // Add a command to the relay dictionary. Such relay are given the remaining of the command.
     void setDefaultHandler(void (*function)(const char *));   // A handler to call when no valid command received.
 
     void processSerial(Stream &comms);  // Process what on the stream
@@ -82,6 +82,14 @@ class CommandHandler {
     };                                    // Data structure to hold Command/Handler function key-value pairs
     CommandHandlerCallback *commandList;   // Actual definition for command/handler array
     byte commandCount;
+
+    // Relay/handler dictionary
+    struct RelayHandlerCallback {
+      char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
+      void (*function)(const char *);
+    };                                 // Data structure to hold Relay/Handler function key-value pairs
+    RelayHandlerCallback *relayList;   // Actual definition for Relay/handler array
+    byte relayCount;
 
     // Pointer to the default handler function
     void (*defaultHandler)(const char *);

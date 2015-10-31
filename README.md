@@ -1,6 +1,6 @@
 ## CommandHandler
 
-A Wiring/Arduino library to tokenize and parse commands received either by the serial port, as a string, or char by char.
+A Wiring/Arduino library to tokenize, parse and relay commands received either by the serial port, as a string, or char by char.
 
 The message format is:
 ```
@@ -11,14 +11,15 @@ Although the field separator ',' and command separator ';' can be changed.
 
 The library can:
 - Attach callback functions to received command
+- Relay the remaining of a command to attached callback functions (typically another CommandHandler)
 - Parse a command char by char
 - Parse a string command
 - Receive commands through the serial port
-- Both read multiple arguments
-- Both read all primary data types
+- Read multiple arguments
+- Read all primary data types
 
 We expect to support soon:
-- Forging of string packet with multiple argument of different primary type
+- Forging of string packet with multiple arguments of different primary type
 
 #### Main difference with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand) and [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
 
@@ -29,6 +30,14 @@ It differs with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand
 Imagine your main program receiving "M1,P,2000;" command through Serial. The main program could redirect the "P,2000;" string command to the a sub-device called "M1". The M1 device can then use its own commandHandler to handle the sub command "P,2000;". To extract the remaining of a command, you can use the function remaining(), give that remaining to another commandHandler instance (e.g. the one associated to M1) through the processString() function. The command handler of M1 can then parse it and enjoy all the feature of the commandHandler, i.e. callback and casting of arguments.
 
 Please refer, and read through, the [Demo example](examples/Demo/Demo.ino) for practical usage of this library.
+
+All the above steps can be encapsulated by registering relay callback function. When triggered by the associated command, the command handler with call the relay command, passing in argument the remaining of the command. This behavior is illustrated in the Arduino-CommandAccelStepper library. [TODO add link to library once on github]
+
+### Getting started
+
+Download or clone this repository, rename the folder as CommandHandler and move it to your Arduino libraries folder. You need to restart the Arduino IDE for the library to be loaded and recognized by Arduino.
+
+Please refer to https://www.arduino.cc/en/Guide/Libraries#toc5 for manual installation of libraries.
 
 ### Inspiration
 
