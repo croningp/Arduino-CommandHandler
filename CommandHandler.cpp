@@ -92,7 +92,7 @@ void CommandHandler::setDefaultHandler(void (*function)(const char *)) {
 
 /**
  * This checks the Serial stream for characters, and assembles them into a buffer.
- * When the terminator character (default '\n') is seen, it starts parsing the
+ * When the terminator character (default COMMANDHANDLER_DEFAULT_TERM) is seen, it starts parsing the
  * buffer for a prefix command, and calls handlers setup by addCommand() member
  */
 void CommandHandler::processSerial(Stream &comms) {
@@ -107,7 +107,7 @@ void CommandHandler::processSerial(Stream &comms) {
 
 /**
  * This iterate on a String char by char, and push them into a buffer.
- * When the terminator character (default '\n') is seen, it starts parsing the
+ * When the terminator character (default COMMANDHANDLER_DEFAULT_TERM) is seen, it starts parsing the
  * buffer for a prefix command, and calls handlers setup by addCommand() member
  */
 void CommandHandler::processString(const char *inString) {
@@ -122,7 +122,7 @@ void CommandHandler::processString(const char *inString) {
 
 /**
  * This add a characters to the buffer, and analyse the buffer.
- * When the terminator character (default '\n') is seen, it starts parsing the
+ * When the terminator character (default COMMANDHANDLER_DEFAULT_TERM) is seen, it starts parsing the
  * buffer for a prefix command, and calls handlers setup by addCommand() member
  */
 void CommandHandler::processChar(char inChar) {
