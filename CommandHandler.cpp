@@ -99,7 +99,8 @@ void CommandHandler::processSerial(Stream &comms) {
   while (comms.available() > 0) {
     char inChar = comms.read();   // Read single available character, there may be more waiting
     #ifdef COMMANDHANDLER_DEBUG
-      Serial.print(inChar);   // Echo back to serial stream
+      Serial.print("Serial: ");
+      Serial.println(inChar);   // Echo back to serial stream
     #endif
     processChar(inChar);
   }
@@ -114,7 +115,8 @@ void CommandHandler::processString(const char *inString) {
   for (int i = 0; i < strlen(inString); i++){
     char inChar = inString[i];
     #ifdef COMMANDHANDLER_DEBUG
-      Serial.print(inChar);   // Echo back to serial stream
+      Serial.print("String: ");
+      Serial.println(inChar);   // Echo back to serial stream
     #endif
     processChar(inChar);
   }
@@ -173,6 +175,7 @@ void CommandHandler::processChar(char inChar) {
           #ifdef COMMANDHANDLER_DEBUG
             Serial.print("Matched Relay: ");
             Serial.println(command);
+
           #endif
 
           // Execute the stored handler function for the command
@@ -189,8 +192,9 @@ void CommandHandler::processChar(char inChar) {
   }
   else if (isprint(inChar)) {     // Only printable characters into the buffer
     if (bufPos < COMMANDHANDLER_BUFFER) {
-      buffer[bufPos++] = inChar;  // Put character into buffer
-      buffer[bufPos] = STRING_NULL_TERM;      // Null terminate
+      buffer[bufPos] = inChar;  // Put character into buffer
+      buffer[bufPos+1] = STRING_NULL_TERM;      // Null terminate
+      bufPos++;
     } else {
       #ifdef COMMANDHANDLER_DEBUG
         Serial.println("Line buffer is full - increase COMMANDHANDLER_BUFFER");
@@ -221,32 +225,19 @@ char *CommandHandler::next() {
  */
 char *CommandHandler::remaining() {
 
-  // reading all remaining arguments and concat them
-  char *arg;
-  arg = next();
+  //reinit the remains char
+  remains[0] = STRING_NULL_TERM;
 
-  // if nothing to fowrard return NULL
-  if (arg == NULL){
-    clearBuffer();
-    return arg;
-  }
-
-  // else build and return what remains
-  char remaining[COMMANDHANDLER_BUFFER];
-
-  strcpy(remaining, arg);
-  arg = next();
-  while (arg!= NULL ){
-    strcat(remaining, delim);
-    strcat(remaining, arg);
-    arg = next();
-  }
-
-  // add the terminator with the null term
+  // forge term in string format
   char str_term[2];
   str_term[0] = term;
   str_term[1] = STRING_NULL_TERM;
-  strcat(remaining, str_term);
+
+  char *command = strtok_r(NULL, str_term, &last);   // Search for the remaining up to next term
+
+  //forge string command + term
+  strcpy(remains, command);
+  strcat(remains, str_term);
 
   // clear the buffer now, we emptied the current command
   // the remaining is might be given to another handler
@@ -254,8 +245,7 @@ char *CommandHandler::remaining() {
   // hence the buffer should be emptied now
   clearBuffer();
 
-  return remaining;
-
+  return remains;
 }
 
 // Below are helpers to read args and cast them into specific type

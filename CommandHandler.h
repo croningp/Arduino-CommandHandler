@@ -101,6 +101,8 @@ class CommandHandler {
     char buffer[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters while waiting for terminator character
     byte bufPos;                        // Current position in the buffer
     char *last;                         // State variable used by strtok_r during processing
+
+    char remains[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters to pass to a relay function
 };
 
 #endif //CommandHandler_h
