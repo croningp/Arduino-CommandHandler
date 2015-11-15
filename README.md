@@ -23,7 +23,7 @@ The library can:
 
 - add link to Python-CommandHandler once done, in the demo file also
 
-#### Main difference with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand) and [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
+#### Features and main difference with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand) and [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
 
 Unlike [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger), the command identifier can be any string, which make your code more readable
 
@@ -34,6 +34,8 @@ Imagine your main program receiving "M1,P,2000;" command through Serial. The mai
 Please refer, and read through, the [Demo example](examples/Demo/Demo.ino) for practical usage of this library.
 
 All the above steps can be encapsulated by registering relay callback function. When triggered by the associated command, the command handler with call the relay command, passing in argument the remaining of the command. This behavior is illustrated in the [Arduino-CommandAccelStepper](https://github.com/croningp/Arduino-CommandAccelStepper) library.
+
+We are trying to implement Command[Name] devices. We also implemented a [CommandManager](https://github.com/croningp/Arduino-CommandManager)) that standardize and ease the use and setting up of Command[Name] devices
 
 ### Getting started
 
