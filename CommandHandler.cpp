@@ -30,16 +30,22 @@
  * Example: SerialCommand sCmd(" ", ';');
  * Default are COMMANDHANDLER_DEFAULT_DELIM and COMMANDHANDLER_DEFAULT_TERM
  */
-CommandHandler::CommandHandler(char *newdelim, char newterm)
+CommandHandler::CommandHandler(const char *newdelim, char newterm)
   : commandList(NULL),
     commandCount(0),
     relayList(NULL),
     relayCount(0),
     defaultHandler(NULL),
     term(newterm),           // asssign new terminator for commands
-    last(NULL)
+    last(NULL),
+    delim(newdelim) // assign new delimitor
 {
-  delim = newdelim; // assign new delimitor, strtok_r needs a null-terminated string
+  inCmdStream = &Serial;
+  outCmdStream = &Serial;
+
+  commandHeader = String("");
+  commandDecimal = 2;
+
   clearBuffer();
 }
 
@@ -90,14 +96,29 @@ void CommandHandler::setDefaultHandler(void (*function)(const char *)) {
   defaultHandler = function;
 }
 
+
+/**
+ * Assign the default serial
+ */
+void CommandHandler::setInCmdSerial(Stream &inStream) {
+  inCmdStream = &inStream;
+}
+
+/**
+ * Check the default Serial
+ */
+void CommandHandler::processSerial() {
+  processSerial(*inCmdStream);
+}
+
 /**
  * This checks the Serial stream for characters, and assembles them into a buffer.
  * When the terminator character (default COMMANDHANDLER_DEFAULT_TERM) is seen, it starts parsing the
  * buffer for a prefix command, and calls handlers setup by addCommand() member
  */
-void CommandHandler::processSerial(Stream &comms) {
-  while (comms.available() > 0) {
-    char inChar = comms.read();   // Read single available character, there may be more waiting
+void CommandHandler::processSerial(Stream &inStream) {
+  while (inStream.available() > 0) {
+    char inChar = inStream.read();   // Read single available character, there may be more waiting
     #ifdef COMMANDHANDLER_DEBUG
       Serial.print("Serial: ");
       Serial.println(inChar);   // Echo back to serial stream
@@ -228,14 +249,15 @@ char *CommandHandler::remaining() {
   //reinit the remains char
   remains[0] = STRING_NULL_TERM;
 
-  // forge term in string format
+
   char str_term[2];
   str_term[0] = term;
   str_term[1] = STRING_NULL_TERM;
 
-  char *command = strtok_r(NULL, str_term, &last);   // Search for the remaining up to next term
+   // Search for the remaining up to next term
+  char *command = strtok_r(NULL, str_term, &last);
 
-  //forge string command + term
+  // forge term in string format
   strcpy(remains, command);
   strcat(remains, str_term);
 
@@ -248,14 +270,16 @@ char *CommandHandler::remaining() {
   return remains;
 }
 
-// Below are helpers to read args and cast them into specific type
-// It has been strongly inspired by CmdMessenger
+
+
+/*****************************************
+ * Helpers to read args and cast them into specific type, strongly inspired by CmdMessenger
+ *****************************************/
 
 /**
  * Read the next argument as int16
  */
-int16_t CommandHandler::readInt16Arg()
-{
+int CommandHandler::readInt16Arg() {
   char *arg;
   arg = next();
   if (arg != NULL) {
@@ -269,8 +293,7 @@ int16_t CommandHandler::readInt16Arg()
 /**
  * Read the next argument as int32
  */
-int32_t CommandHandler::readInt32Arg()
-{
+long CommandHandler::readInt32Arg() {
   char *arg;
   arg = next();
   if (arg != NULL) {
@@ -284,16 +307,14 @@ int32_t CommandHandler::readInt32Arg()
 /**
  * Read the next argument as bool
  */
-bool CommandHandler::readBoolArg()
-{
+bool CommandHandler::readBoolArg() {
   return (readInt16Arg() != 0) ? true : false;
 }
 
 /**
  * Read the next argument as float
  */
-float CommandHandler::readFloatArg()
-{
+float CommandHandler::readFloatArg() {
   char *arg;
   arg = next();
   if (arg != NULL) {
@@ -307,8 +328,7 @@ float CommandHandler::readFloatArg()
 /**
  * Read the next argument as double
  */
-double CommandHandler::readDoubleArg()
-{
+double CommandHandler::readDoubleArg() {
   char *arg;
   arg = next();
   if (arg != NULL) {
@@ -322,8 +342,7 @@ double CommandHandler::readDoubleArg()
 /**
  * Read next argument as string.
  */
-char* CommandHandler::readStringArg()
-{
+char* CommandHandler::readStringArg() {
   char *arg;
   arg = next();
   if (arg != NULL) {
@@ -337,12 +356,157 @@ char* CommandHandler::readStringArg()
 /**
  * Compare the next argument with a string
  */
-bool CommandHandler::compareStringArg(const char *stringToCompare)
-{
+bool CommandHandler::compareStringArg(const char *stringToCompare) {
   char *arg;
   arg = next();
   if (arg != NULL) {
     return (strcmp(stringToCompare, arg) == 0) ? true : false;
   }
   return false;
+}
+
+/*****************************************
+ * Forging and sending output commands
+ *****************************************/
+
+
+/**
+ * Set an header for the output command
+ */
+void CommandHandler::setCmdHeader(const char *cmdHeader, bool addDelim) {
+
+  commandHeader = String(cmdHeader);
+
+  if (addDelim == true) {
+    commandHeader = commandHeader + String(delim);
+  }
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out Command Header is now ");
+    Serial.println(commandHeader);
+  #endif
+}
+
+void CommandHandler::initCmd() {
+
+  commandString = commandHeader;
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out command is now ");
+    Serial.println(commandString);
+  #endif
+}
+
+void CommandHandler::addCmdDelim() {
+
+  commandString = commandString + String(delim);
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out command is now ");
+    Serial.println(commandString);
+  #endif
+}
+//
+void CommandHandler::addCmdTerm() {
+
+  commandString = commandString + String(term);
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out command is now ");
+    Serial.println(commandString);
+  #endif
+}
+
+void CommandHandler::addCmdBool(bool value) {
+
+  commandString = commandString + String(value);
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out command is now ");
+    Serial.println(commandString);
+  #endif
+}
+
+void CommandHandler::addCmdInt16(int16_t value) {
+
+  commandString = commandString + String(value, DEC);
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out command is now ");
+    Serial.println(commandString);
+  #endif
+}
+
+void CommandHandler::addCmdInt32(int32_t value) {
+
+  commandString = commandString + String(value, DEC);
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out command is now ");
+    Serial.println(commandString);
+  #endif
+}
+
+
+void CommandHandler::setCmdDecimal(byte decimal) {
+  commandDecimal = decimal;
+}
+
+void CommandHandler::addCmdFloat(double value) {
+  addCmdFloat(value, commandDecimal);
+}
+
+void CommandHandler::addCmdFloat(float value, byte decimal) {
+
+
+  commandString = commandString + String(value, decimal);
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out command is now ");
+    Serial.println(commandString);
+  #endif
+}
+
+void CommandHandler::addCmdDouble(double value) {
+  addCmdDouble(value, commandDecimal);
+}
+
+void CommandHandler::addCmdDouble(double value, byte decimal) {
+
+  commandString = commandString + String(value, decimal);
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out command is now ");
+    Serial.println(commandString);
+  #endif
+}
+
+void CommandHandler::addCmdString(const char *value) {
+
+  commandString = commandString + String(value);
+
+  #ifdef COMMANDHANDLER_DEBUG
+    Serial.print("Out command is now ");
+    Serial.println(commandString);
+  #endif
+
+}
+
+char* CommandHandler::getOutCmd() {
+
+  commandString.toCharArray(command, COMMANDHANDLER_BUFFER + 1);
+
+  return command;
+}
+
+void CommandHandler::setOutCmdSerial(Stream &outStream) {
+  outCmdStream = &outStream;
+}
+
+void CommandHandler::sendCmdSerial() {
+  sendCmdSerial(*outCmdStream);
+}
+
+void CommandHandler::sendCmdSerial(Stream &outStream) {
+  outStream.print(commandString);
 }

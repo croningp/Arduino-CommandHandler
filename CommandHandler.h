@@ -51,12 +51,14 @@
 
 class CommandHandler {
   public:
-    CommandHandler(char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, char newterm = COMMANDHANDLER_DEFAULT_TERM);   // Constructor
+    CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm = COMMANDHANDLER_DEFAULT_TERM);   // Constructor
     void addCommand(const char *command, void(*function)());  // Add a command to the processing dictionary.
     void addRelay(const char *command, void (*function)(const char *, void*), void* pt2Object = NULL);  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
     void setDefaultHandler(void (*function)(const char *));   // A handler to call when no valid command received.
 
-    void processSerial(Stream &comms);  // Process what on the stream
+    void setInCmdSerial(Stream &inStream); // define to which serial to send the read commands
+    void processSerial();  // Process what on the in stream
+    void processSerial(Stream &inStream);  // Process what on the designated stream
     void processString(const char *inString); // Process a String
     void processChar(char inChar); //Process a char
     void clearBuffer();   // Clears the input buffer.
@@ -65,13 +67,39 @@ class CommandHandler {
 
     // helpers to cast next into different types
     bool argOk; // this variable is set after the below function are run, it tell you if thing went well
+    bool readBoolArg();
     int16_t readInt16Arg();
     int32_t readInt32Arg();
-    bool readBoolArg();
     float readFloatArg();
     double readDoubleArg();
     char *readStringArg();
     bool compareStringArg(const char *stringToCompare);
+
+    //helpers to create a message
+    void setCmdHeader(const char *cmdHeader, bool addDelim = true); // setting a char to be added at the start of each out message (default "")
+    void initCmd(); // initialize the command buffer  to build next message to be sent
+
+    void clearCmd(); // clear the output command
+    void addCmdDelim();
+    void addCmdTerm();
+
+    void addCmdBool(bool value);
+    void addCmdInt16(int16_t value);
+    void addCmdInt32(int32_t value);
+
+    void setCmdDecimal(byte decimal);
+    void addCmdFloat(double value);
+    void addCmdFloat(float value, byte decimal);
+    void addCmdDouble(double value);
+    void addCmdDouble(double value, byte decimal);
+
+    void addCmdString(const char *value);
+
+    char* getOutCmd(); // get pointer to command buffer
+
+    void setOutCmdSerial(Stream &outStream); // define to which serial to send the out commands
+    void sendCmdSerial(); //send current command thought the Stream
+    void sendCmdSerial(Stream &outStream); //send current command thought the Stream
 
   private:
 
@@ -95,7 +123,7 @@ class CommandHandler {
     // Pointer to the default handler function
     void (*defaultHandler)(const char *);
 
-    char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
+    const char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
     char term;     // Character that signals end of command (default '\n')
 
     char buffer[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters while waiting for terminator character
@@ -103,6 +131,16 @@ class CommandHandler {
     char *last;                         // State variable used by strtok_r during processing
 
     char remains[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters to pass to a relay function
+
+    char command[COMMANDHANDLER_BUFFER + 1];
+    String commandString; // Out Command
+    String commandHeader; // header for out command
+    byte commandDecimal;
+
+
+    // in and out default strem
+    Stream *inCmdStream;
+    Stream *outCmdStream;
 };
 
 #endif //CommandHandler_h

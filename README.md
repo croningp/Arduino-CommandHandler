@@ -17,9 +17,11 @@ The library can:
 - Receive commands through the serial port
 - Read multiple arguments
 - Read all primary data types
-
-We expect to support soon:
 - Forging of string packet with multiple arguments of different primary type
+
+#### TODO
+
+- add link to Python-CommandHandler once done, in the demo file also
 
 #### Main difference with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand) and [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
 

@@ -14,13 +14,14 @@ CommandHandler cmdHdl;
 
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(9600); // setting up the serial port to 9600 baud
 
   // Setup callbacks for SerialCommand commands
   cmdHdl.addCommand("HELLO", sayHello);        // Echos the string argument back
   cmdHdl.addCommand("FWD",   forwardRemaining);// Fwd the remaining of the command to the cmdHdl
   cmdHdl.addCommand("P",     processCommand);  // Converts two arguments, first to double and echos them back
   cmdHdl.addCommand("GUESS", guessMyName);     // A game for guessing my name, used to test compareStringArg
+  cmdHdl.addCommand("PING", pongMesssage);     // A function that use the packet forging tool to send a random ping time
   cmdHdl.setDefaultHandler(unrecognized);      // Handler for command that isn't matched  (says "What?")
 
   // You can process string directly into the arduino
@@ -29,12 +30,49 @@ void setup() {
   // This string happens to be a, HELLO command
   // Thus the arduino will execute the sayHello function
   // The sayHello function can then access the argument of the command
+
+  // MORE EXPLANATION ABOUT CALLBACK POSSIBILITIES IN THE loop()
+
+  // You can also forge packet to send
+  // This is useful to talk to another device having a command handler
+  // For example talking to another arduino board
+  // Or to you computer using the Python-CommandHandler module [add link once online]
+  
+  // First you can define a header for all you message, e.g. the name of the device
+  cmdHdl.setCmdHeader("FEEDBACK"); // here we call it FEEDBACK, a delim will automatically be added after the header
+  // use cmdHdl.setCmdHeader("FEEDBACK", false); if you do not want a delimiter
+
+  // always start by initiating your message, it just set things up
+  cmdHdl.initCmd(); 
+  // now create the message you like
+  cmdHdl.addCmdString("ALIVE"); // add a string
+  cmdHdl.addCmdDelim(); // add a delim
+  cmdHdl.addCmdBool(true); // add a boolean
+  cmdHdl.addCmdDelim(); // add a delim
+  cmdHdl.addCmdInt32(938); //add a int
+  cmdHdl.addCmdDelim(); // add a delim
+  cmdHdl.addCmdDouble(-2147.483647, 3); // add a double, printed with 3 decimal
+  // if unspecified decimal, default is 2)
+  // you can change the default decimal to N using cmdHdl.setCmdDecimal(N)
+  cmdHdl.addCmdTerm(); //finally end your message with the term char
+
+  // once the message is ready, send it
+  // either by getting it and sending it however you want
+  Serial.println(cmdHdl.getOutCmd()); // that will print the message on Serial
+  // or by using the Serial using the directly embeded Serial send
+  cmdHdl.sendCmdSerial(); // also send current Cmd to Serial (by default)
+  // you can also set the default Out Serial to use by:
+  // cmdHdl.setOutCmdSerial(Serial); // default is Serial
+  Serial.println(); // just adding this so the ouput on the serial terminal looks nice
 }
 
 void loop() {
   //Of course we can use the same functionnality by readng from the Serial
   cmdHdl.processSerial(Serial);
   // Try send "HELLO,yourname;" to your board via serial
+  // you can also set the default In Serial to use by:
+  // cmdHdl.setInCmdSerial(Serial); // default is Serial
+  // cmdHdl.processSerial();
 
   // The above processSerial function is simply doing the following
   //if (Serial.available() > 0){
@@ -60,6 +98,8 @@ void loop() {
   // P,3.5;
   // FWD,P,3.5;
   // FWD,FWD,FWD,P,3.5;
+  // PING;
+  // GUESS,Maurice;
 }
 
 void sayHello() {
@@ -119,6 +159,25 @@ void guessMyName() {
   else {
     Serial.println("Nop, that's not my name, try again..");
   }
+}
+
+void pongMesssage() {
+
+  Serial.println("Received PING, pausing for a random time..."); // for the demo only!
+  
+  unsigned long start = millis();
+  delay(random(1000));
+  unsigned long elasped = millis() - start;
+  
+  cmdHdl.initCmd();
+  cmdHdl.addCmdString("PONG");
+  cmdHdl.addCmdDelim();
+  cmdHdl.addCmdInt32(elasped);
+  cmdHdl.addCmdTerm();
+  cmdHdl.sendCmdSerial();
+
+  Serial.println(); // for the demo only! so the output look nice
+  Serial.println("Above is the feedback command indicating the pause time.");
 }
 
 // This gets set as the default handler, and gets called when no other command matches.
