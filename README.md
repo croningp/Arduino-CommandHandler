@@ -35,7 +35,7 @@ Please refer, and read through, the [Demo example](examples/Demo/Demo.ino) for p
 
 All the above steps can be encapsulated by registering relay callback function. When triggered by the associated command, the command handler with call the relay command, passing in argument the remaining of the command. This behavior is illustrated in the [Arduino-CommandAccelStepper](https://github.com/croningp/Arduino-CommandAccelStepper) library.
 
-We are trying to implement Command[Name] devices. We also implemented a [CommandManager](https://github.com/croningp/Arduino-CommandManager) that standardize and ease the use and setting up of Command[Name] devices
+We are trying to implement Command[Name] devices. We also implemented a [CommandManager](https://github.com/croningp/Arduino-CommandManager) that standardize and ease the use and setting up of Command[Name] devices.
 
 ### Getting started
 
