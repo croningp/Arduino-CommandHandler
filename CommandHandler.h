@@ -55,6 +55,7 @@ class CommandHandler {
     void addCommand(const char *command, void(*function)());  // Add a command to the processing dictionary.
     void addRelay(const char *command, void (*function)(const char *, void*), void* pt2Object = NULL);  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
     void setDefaultHandler(void (*function)(const char *));   // A handler to call when no valid command received.
+    void setDefaultHandler(void (*function)(const char *, void*), void* pt2Object);   // A handler to call when no valid command received.
 
     void setInCmdSerial(Stream &inStream); // define to which serial to send the read commands
     void processSerial();  // Process what on the in stream
@@ -122,6 +123,8 @@ class CommandHandler {
 
     // Pointer to the default handler function
     void (*defaultHandler)(const char *);
+    void* pt2defaultHandlerObject;
+    void (*wrapper_defaultHandler)(const char *, void*);
 
     const char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
     char term;     // Character that signals end of command (default '\n')

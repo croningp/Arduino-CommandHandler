@@ -36,6 +36,8 @@ CommandHandler::CommandHandler(const char *newdelim, char newterm)
     relayList(NULL),
     relayCount(0),
     defaultHandler(NULL),
+    pt2defaultHandlerObject(NULL),
+    wrapper_defaultHandler(NULL),
     term(newterm),           // asssign new terminator for commands
     last(NULL),
     delim(newdelim) // assign new delimitor
@@ -96,6 +98,10 @@ void CommandHandler::setDefaultHandler(void (*function)(const char *)) {
   defaultHandler = function;
 }
 
+void CommandHandler::setDefaultHandler(void (*function)(const char *, void*), void* pt2Object) {
+  pt2defaultHandlerObject = pt2Object;
+  wrapper_defaultHandler = function;
+}
 
 /**
  * Assign the default serial
@@ -196,7 +202,6 @@ void CommandHandler::processChar(char inChar) {
           #ifdef COMMANDHANDLER_DEBUG
             Serial.print("Matched Relay: ");
             Serial.println(command);
-
           #endif
 
           // Execute the stored handler function for the command
@@ -205,8 +210,12 @@ void CommandHandler::processChar(char inChar) {
           break;
         }
       }
-      if (!matched && (defaultHandler != NULL)) {
-        (*defaultHandler)(command);
+      if (!matched){
+        if (defaultHandler != NULL) {
+          (*defaultHandler)(command);
+        } else if (pt2defaultHandlerObject != NULL) {
+          (*wrapper_defaultHandler)(command, pt2defaultHandlerObject);
+        }
       }
     }
     clearBuffer();
@@ -248,7 +257,6 @@ char *CommandHandler::remaining() {
 
   //reinit the remains char
   remains[0] = STRING_NULL_TERM;
-
 
   char str_term[2];
   str_term[0] = term;
