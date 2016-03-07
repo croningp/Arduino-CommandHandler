@@ -287,7 +287,7 @@ char *CommandHandler::remaining() {
 /**
  * Read the next argument as int16
  */
-int CommandHandler::readInt16Arg() {
+int CommandHandler::readIntArg() {
   char *arg;
   arg = next();
   if (arg != NULL) {
@@ -301,7 +301,7 @@ int CommandHandler::readInt16Arg() {
 /**
  * Read the next argument as int32
  */
-long CommandHandler::readInt32Arg() {
+long CommandHandler::readLongArg() {
   char *arg;
   arg = next();
   if (arg != NULL) {
@@ -316,7 +316,7 @@ long CommandHandler::readInt32Arg() {
  * Read the next argument as bool
  */
 bool CommandHandler::readBoolArg() {
-  return (readInt16Arg() != 0) ? true : false;
+  return (readIntArg() != 0) ? true : false;
 }
 
 /**
@@ -435,7 +435,7 @@ void CommandHandler::addCmdBool(bool value) {
   #endif
 }
 
-void CommandHandler::addCmdInt16(int16_t value) {
+void CommandHandler::addCmdInt(int value) {
 
   commandString = commandString + String(value, DEC);
 
@@ -445,7 +445,7 @@ void CommandHandler::addCmdInt16(int16_t value) {
   #endif
 }
 
-void CommandHandler::addCmdInt32(int32_t value) {
+void CommandHandler::addCmdLong(long value) {
 
   commandString = commandString + String(value, DEC);
 

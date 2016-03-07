@@ -14,7 +14,7 @@ CommandHandler cmdHdl;
 
 void setup() {
 
-  Serial.begin(9600); // setting up the serial port to 9600 baud
+  Serial.begin(115200); // setting up the serial port to 9600 baud
 
   // Setup callbacks for SerialCommand commands
   cmdHdl.addCommand("HELLO", sayHello);        // Echos the string argument back
@@ -37,19 +37,19 @@ void setup() {
   // This is useful to talk to another device having a command handler
   // For example talking to another arduino board
   // Or to you computer using the Python-CommandHandler module [add link once online]
-  
+
   // First you can define a header for all you message, e.g. the name of the device
   cmdHdl.setCmdHeader("FEEDBACK"); // here we call it FEEDBACK, a delim will automatically be added after the header
   // use cmdHdl.setCmdHeader("FEEDBACK", false); if you do not want a delimiter
 
   // always start by initiating your message, it just set things up
-  cmdHdl.initCmd(); 
+  cmdHdl.initCmd();
   // now create the message you like
   cmdHdl.addCmdString("ALIVE"); // add a string
   cmdHdl.addCmdDelim(); // add a delim
   cmdHdl.addCmdBool(true); // add a boolean
   cmdHdl.addCmdDelim(); // add a delim
-  cmdHdl.addCmdInt32(938); //add a int
+  cmdHdl.addCmdLong(938); //add a int32
   cmdHdl.addCmdDelim(); // add a delim
   cmdHdl.addCmdDouble(-2147.483647, 3); // add a double, printed with 3 decimal
   // if unspecified decimal, default is 2)
@@ -164,15 +164,15 @@ void guessMyName() {
 void pongMesssage() {
 
   Serial.println("Received PING, pausing for a random time..."); // for the demo only!
-  
+
   unsigned long start = millis();
   delay(random(1000));
   unsigned long elasped = millis() - start;
-  
+
   cmdHdl.initCmd();
   cmdHdl.addCmdString("PONG");
   cmdHdl.addCmdDelim();
-  cmdHdl.addCmdInt32(elasped);
+  cmdHdl.addCmdLong(elasped);
   cmdHdl.addCmdTerm();
   cmdHdl.sendCmdSerial();
 

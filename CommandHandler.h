@@ -69,8 +69,8 @@ class CommandHandler {
     // helpers to cast next into different types
     bool argOk; // this variable is set after the below function are run, it tell you if thing went well
     bool readBoolArg();
-    int16_t readInt16Arg();
-    int32_t readInt32Arg();
+    int readIntArg();
+    long readLongArg();
     float readFloatArg();
     double readDoubleArg();
     char *readStringArg();
@@ -85,8 +85,8 @@ class CommandHandler {
     void addCmdTerm();
 
     void addCmdBool(bool value);
-    void addCmdInt16(int16_t value);
-    void addCmdInt32(int32_t value);
+    void addCmdInt(int value);
+    void addCmdLong(long value);
 
     void setCmdDecimal(byte decimal);
     void addCmdFloat(double value);
