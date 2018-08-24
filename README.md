@@ -30,9 +30,9 @@ Imagine your main program receiving "M1,P,2000;" command through Serial. The mai
 
 Please refer, and read through, the [Demo example](examples/Demo/Demo.ino) for practical usage of this library.
 
-All the above steps can be encapsulated by registering relay callback function. When triggered by the associated command, the command handler with call the relay command, passing in argument the remaining of the command. This behavior is illustrated in the [Arduino-CommandAccelStepper](https://github.com/croningp/Arduino-CommandAccelStepper) library.
+All the above steps can be encapsulated by registering relay callback function. When triggered by the associated command, the command handler with call the relay command, passing in argument the remaining of the command. 
 
-We are trying to implement Command[Name] devices. We also implemented a [CommandManager](https://github.com/croningp/Arduino-CommandManager) that standardize and ease the use and setting up of Command[Name] devices.
+This behavior is illustrated in the [Arduino-CommandTools](https://github.com/croningp/Arduino-CommandTools) libraries, a set of modular librairies build on top of this message parsing library.
 
 ## Getting started
 
