@@ -1,4 +1,4 @@
-## CommandHandler
+# CommandHandler
 
 A Wiring/Arduino library to tokenize, parse and relay commands received either by the serial port, as a string, or char by char.
 
@@ -20,7 +20,7 @@ The library can:
 - Forging of string packet with multiple arguments of different primary type
 
 
-#### Features and main difference with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand) and [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
+### Features and main difference with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand) and [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
 
 Unlike [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger), the command identifier can be any string, which make your code more readable
 
@@ -34,22 +34,22 @@ All the above steps can be encapsulated by registering relay callback function. 
 
 We are trying to implement Command[Name] devices. We also implemented a [CommandManager](https://github.com/croningp/Arduino-CommandManager) that standardize and ease the use and setting up of Command[Name] devices.
 
-### Getting started
+## Getting started
 
 Download or clone this repository, rename the folder as CommandHandler and move it to your Arduino libraries folder. You need to restart the Arduino IDE for the library to be loaded and recognized by Arduino.
 
 Please refer to https://www.arduino.cc/en/Guide/Libraries#toc5 for manual installation of libraries.
 
-### Inspiration
+## Inspiration
 
 This is derived from the SerialCommand library whose original version was written by [Steven Cogswell](http://husks.wordpress.com) (published May 23, 2011 in his blog post ["A Minimal Arduino Library for Processing Serial Commands"](http://husks.wordpress.com/2011/05/23/a-minimal-arduino-library-for-processing-serial-commands/)). It is based on the [SerialCommand heavily modified version with smaller footprint and a cleaned up code by Stefan Rado](https://github.com/kroimon/Arduino-SerialCommand).
 
 Some features are also extracted from [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger), such as the function returning next arg already casted in types, e.g. readInt16Arg
 
-### Author
+## Author
 
 [Jonathan Grizou](http://jgrizou.com/) while working in the [CroninGroup](http://www.chem.gla.ac.uk/cronin/).
 
-### License
+## License
 
 [![GPL V3](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl.html)
