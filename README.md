@@ -19,9 +19,6 @@ The library can:
 - Read all primary data types
 - Forging of string packet with multiple arguments of different primary type
 
-#### TODO
-
-- add link to Python-CommandHandler once done, in the demo file also
 
 #### Features and main difference with [SerialCommand](https://github.com/kroimon/Arduino-SerialCommand) and [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
 
@@ -49,8 +46,12 @@ This is derived from the SerialCommand library whose original version was writte
 
 Some features are also extracted from [CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger), such as the function returning next arg already casted in types, e.g. readInt16Arg
 
+### Author
+
+[Jonathan Grizou](http://jgrizou.com/) while working in the [CroninGroup](http://www.chem.gla.ac.uk/cronin/).
+
+Thanks to Vasilis Duros and Graham Keenan for proofreading the documentation.
+
 ### License
 
-This code has been written by Jonathan Grizou while working in the CroninGroup.
-
-[![LGPL V3](http://www.gnu.org/graphics/lgplv3-147x51.png)](http://www.gnu.org/licenses/lgpl-3.0.en.html)
+[![GPL V3](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl.html)
