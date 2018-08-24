@@ -48,7 +48,7 @@ Some features are also extracted from [CmdMessenger](https://github.com/thijse/A
 
 ## Author
 
-[Jonathan Grizou](http://jgrizou.com/) while working in the [CroninGroup](http://www.chem.gla.ac.uk/cronin/).
+[Jonathan Grizou](http://jgrizou.com/) while working in the [Cronin Group](http://www.chem.gla.ac.uk/cronin/).
 
 ## License
 
