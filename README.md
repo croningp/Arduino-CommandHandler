@@ -50,8 +50,6 @@ Some features are also extracted from [CmdMessenger](https://github.com/thijse/A
 
 [Jonathan Grizou](http://jgrizou.com/) while working in the [CroninGroup](http://www.chem.gla.ac.uk/cronin/).
 
-Thanks to Vasilis Duros and Graham Keenan for proofreading the documentation.
-
 ### License
 
 [![GPL V3](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl.html)
