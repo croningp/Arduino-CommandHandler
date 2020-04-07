@@ -137,8 +137,6 @@ class CommandHandler {
     byte bufPos;                        // Current position in the buffer
     char *last;                         // State variable used by strtok_r during processing
 
-    char remains[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters to pass to a relay function
-
     String commandString; // Out Command
     String commandHeader; // header for out command
     byte commandDecimal;
