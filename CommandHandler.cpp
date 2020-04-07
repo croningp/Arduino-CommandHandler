@@ -183,6 +183,13 @@ void CommandHandler::processChar(char inChar) {
 
           // Execute the stored handler function for the command
           (*commandList[i].function)();
+
+          #ifdef COMMANDHANDLER_DEBUG
+            int free_mem = (int) AVR_STACK_POINTER_REG - (int) __brkval;
+            Serial.print("Free SRAM: ");
+            Serial.println(free_mem);
+          #endif
+
           matched = true;
           break;
         }
@@ -206,6 +213,12 @@ void CommandHandler::processChar(char inChar) {
 
           // Execute the stored handler function for the command
           (*relayList[i].function)(remaining(), relayList[i].pt2Object);
+
+          #ifdef COMMANDHANDLER_DEBUG
+            int free_mem = (int) AVR_STACK_POINTER_REG - (int) __brkval;
+            Serial.print("Free SRAM: ");
+            Serial.println(free_mem);
+          #endif
           matched = true;
           break;
         }
@@ -225,6 +238,10 @@ void CommandHandler::processChar(char inChar) {
       buffer[bufPos] = inChar;  // Put character into buffer
       buffer[bufPos+1] = STRING_NULL_TERM;      // Null terminate
       bufPos++;
+      #ifdef COMMANDHANDLER_DEBUG
+      Serial.print("Current buffer: ");
+      Serial.println(buffer);
+      #endif
     } else {
       #ifdef COMMANDHANDLER_DEBUG
         Serial.println("Line buffer is full - increase COMMANDHANDLER_BUFFER");

@@ -46,7 +46,11 @@
 #define STRING_NULL_TERM '\0'
 
 // Uncomment the next line to run the library in debug mode (verbose messages)
-// #define COMMANDHANDLER_DEBUG
+//#define COMMANDHANDLER_DEBUG
+
+#ifdef COMMANDHANDLER_DEBUG
+extern void *__brkval;
+#endif
 
 
 class CommandHandler {
