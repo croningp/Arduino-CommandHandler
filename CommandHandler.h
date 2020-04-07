@@ -135,7 +135,6 @@ class CommandHandler {
 
     char remains[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters to pass to a relay function
 
-    char command[COMMANDHANDLER_BUFFER + 1];
     String commandString; // Out Command
     String commandHeader; // header for out command
     byte commandDecimal;

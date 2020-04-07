@@ -502,8 +502,8 @@ void CommandHandler::addCmdString(const char *value) {
 
 char* CommandHandler::getOutCmd() {
 
+  char command[COMMANDHANDLER_BUFFER + 1];
   commandString.toCharArray(command, COMMANDHANDLER_BUFFER + 1);
-
   return command;
 }
 
