@@ -227,8 +227,8 @@ void CommandHandler::processChar(char inChar) {
           #ifdef COMMANDHANDLER_DEBUG
             int free_mem = (int) AVR_STACK_POINTER_REG - (int) __brkval;
             Serial.print("Free SRAM: ");
-            Serial.println(free_mem);
-          #endif
+            Serial.print(free_mem);
+            Serial.println(term);
 
           matched = true;
           break;
