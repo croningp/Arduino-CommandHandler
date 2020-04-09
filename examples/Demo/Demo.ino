@@ -18,8 +18,8 @@ void setup() {
 
   // Setup callbacks for SerialCommand commands
   cmdHdl.addCommand("HELLO", sayHello);        // Echos the string argument back
-  cmdHdl.addCommand("FWD",   forwardRemaining);// Fwd the remaining of the command to the cmdHdl
-  cmdHdl.addCommand("P",     processCommand);  // Converts two arguments, first to double and echos them back
+  cmdHdl.addCommand("P", processCommand);      // Converts two arguments, first to double and echos them back
+  cmdHdl.addRelay("FWD", fwdRelay);            // An example of relay function that gets the whole substring as an arguments
   cmdHdl.addCommand("GUESS", guessMyName);     // A game for guessing my name, used to test compareStringArg
   cmdHdl.addCommand("PING", pongMesssage);     // A function that use the packet forging tool to send a random ping time
   cmdHdl.setDefaultHandler(unrecognized);      // Handler for command that isn't matched  (says "What?")
@@ -86,12 +86,7 @@ void loop() {
   // Imagine your main program receiving "M1,P,2000;" command throught Serial
   // The main program could redirect the "P,2000;" string command to the a device called "M1"
   // The M1 device can then use its own commandHandler to handle the sub command "P,2000;"
-  // To extract the remaining of a command, you can use the function remaining()
-  // This is illustrated in the forwardRemaining() function
-  // that is associated to the FWD command in this example
-  // Send "FWD,P,2000;" to the board, it should forward the "P,2000;" to itself
-  // (thanks to the processString() function)
-  // As "P" is assocviated with the processCommand() function, it will run it
+  // This is achieved by the use of relay functions (see example below)
 
   // Below are a bunch of serial command you can try sending
   // Try predicting what it will do
@@ -114,16 +109,12 @@ void sayHello() {
   }
 }
 
-void forwardRemaining() {
-  char *remaining;
-  remaining = cmdHdl.remaining();    // Get the next argument from the SerialCommand object buffer
-  if (remaining != NULL) {    // As long as it existed, take it
-    Serial.print("Forwarding ");
-    Serial.println(remaining);
-    cmdHdl.processString(remaining);
-  } else {
-    Serial.print("Nothing to forward");
-  }
+void fwdRelay(char* remaining){
+  Serial.print("Relay function, got substring - ");
+  Serial.println(remaining);
+  // Here we can do whatever we want with the remaining substring.
+  // For example, we can extract another command and process it:
+  cmdHdl.processString(remaining);
 }
 
 void processCommand() {

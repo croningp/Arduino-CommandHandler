@@ -183,6 +183,13 @@ void CommandHandler::processChar(char inChar) {
 
           // Execute the stored handler function for the command
           (*commandList[i].function)();
+
+          #ifdef COMMANDHANDLER_DEBUG
+            int free_mem = (int) AVR_STACK_POINTER_REG - (int) __brkval;
+            Serial.print("Free SRAM: ");
+            Serial.println(free_mem);
+          #endif
+
           matched = true;
           break;
         }
@@ -204,8 +211,25 @@ void CommandHandler::processChar(char inChar) {
             Serial.println(command);
           #endif
 
+          // Get remaining part of the command buffer
+          // Max length minus command (at least 1 byte)
+          // And delimiter (at least 1 byte)
+          char remaining[COMMANDHANDLER_BUFFER-2];
+          strcpy(remaining, last);
+          // Terminate it with terminator and null byte
+          char eol[2] = {term, STRING_NULL_TERM};
+          strcat(remaining, eol);
+          // Clear buffer so that relay command can use it if needed
+          clearBuffer();
           // Execute the stored handler function for the command
-          (*relayList[i].function)(remaining(), relayList[i].pt2Object);
+          (*relayList[i].function)(remaining, relayList[i].pt2Object);
+
+          #ifdef COMMANDHANDLER_DEBUG
+            int free_mem = (int) AVR_STACK_POINTER_REG - (int) __brkval;
+            Serial.print("Free SRAM: ");
+            Serial.print(free_mem);
+            Serial.println(term);
+
           matched = true;
           break;
         }
@@ -225,6 +249,10 @@ void CommandHandler::processChar(char inChar) {
       buffer[bufPos] = inChar;  // Put character into buffer
       buffer[bufPos+1] = STRING_NULL_TERM;      // Null terminate
       bufPos++;
+      #ifdef COMMANDHANDLER_DEBUG
+      Serial.print("Current buffer: ");
+      Serial.println(buffer);
+      #endif
     } else {
       #ifdef COMMANDHANDLER_DEBUG
         Serial.println("Line buffer is full - increase COMMANDHANDLER_BUFFER");
@@ -248,37 +276,6 @@ void CommandHandler::clearBuffer() {
 char *CommandHandler::next() {
   return strtok_r(NULL, delim, &last);
 }
-
-/**
- * Returns char* of the remaining of the command buffer (for getting arguments to commands).
- * Returns NULL if no more tokens exist.
- */
-char *CommandHandler::remaining() {
-
-  //reinit the remains char
-  remains[0] = STRING_NULL_TERM;
-
-  char str_term[2];
-  str_term[0] = term;
-  str_term[1] = STRING_NULL_TERM;
-
-   // Search for the remaining up to next term
-  char *command = strtok_r(NULL, str_term, &last);
-
-  // forge term in string format
-  strcpy(remains, command);
-  strcat(remains, str_term);
-
-  // clear the buffer now, we emptied the current command
-  // the remaining is might be given to another handler
-  // or it might used by the same commandHandler instance
-  // hence the buffer should be emptied now
-  clearBuffer();
-
-  return remains;
-}
-
-
 
 /*****************************************
  * Helpers to read args and cast them into specific type, strongly inspired by CmdMessenger
@@ -502,8 +499,8 @@ void CommandHandler::addCmdString(const char *value) {
 
 char* CommandHandler::getOutCmd() {
 
+  char command[COMMANDHANDLER_BUFFER + 1];
   commandString.toCharArray(command, COMMANDHANDLER_BUFFER + 1);
-
   return command;
 }
 
@@ -517,4 +514,6 @@ void CommandHandler::sendCmdSerial() {
 
 void CommandHandler::sendCmdSerial(Stream &outStream) {
   outStream.print(commandString);
+  // FIXME string not set to null, potential memory leak here
+  // if string construction is not started from initCmd()
 }

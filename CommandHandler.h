@@ -46,7 +46,11 @@
 #define STRING_NULL_TERM '\0'
 
 // Uncomment the next line to run the library in debug mode (verbose messages)
-// #define COMMANDHANDLER_DEBUG
+//#define COMMANDHANDLER_DEBUG
+
+#ifdef COMMANDHANDLER_DEBUG
+extern void *__brkval;
+#endif
 
 
 class CommandHandler {
@@ -133,9 +137,6 @@ class CommandHandler {
     byte bufPos;                        // Current position in the buffer
     char *last;                         // State variable used by strtok_r during processing
 
-    char remains[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters to pass to a relay function
-
-    char command[COMMANDHANDLER_BUFFER + 1];
     String commandString; // Out Command
     String commandHeader; // header for out command
     byte commandDecimal;
